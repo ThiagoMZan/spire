@@ -1,4 +1,7 @@
+import dotenv from "dotenv";
 import { z } from "zod";
+
+dotenv.config();
 
 function csv(value) {
   if (!value) return [];
