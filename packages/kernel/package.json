@@ -1,0 +1,20 @@
+{
+  "name": "@spire/kernel",
+  "version": "0.1.0",
+  "description": "Public API for Spire modules",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js",
+    "./db": "./src/db.js",
+    "./hooks": "./src/hooks.js",
+    "./events": "./src/events.js",
+    "./http": "./src/http.js",
+    "./logging": "./src/logging.js",
+    "./context": "./src/context.js",
+    "./internal": "./src/internal.js"
+  },
+  "files": ["src"],
+  "engines": {
+    "node": ">=22"
+  }
+}
