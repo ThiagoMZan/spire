@@ -1,0 +1,9 @@
+{
+  "schema": "kernel",
+  "label": "Spire Kernel",
+  "tables": {
+    "event_outbox": { "label": "Event Outbox" },
+    "event_delivery": { "label": "Event Deliveries" },
+    "file": { "label": "Files" }
+  }
+}

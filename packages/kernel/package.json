@@ -8,12 +8,15 @@
     "./db": "./src/db.js",
     "./hooks": "./src/hooks.js",
     "./events": "./src/events.js",
+    "./files": "./src/files.js",
     "./http": "./src/http.js",
     "./logging": "./src/logging.js",
     "./context": "./src/context.js",
     "./internal": "./src/internal.js"
   },
-  "files": ["src"],
+  "files": [
+    "src"
+  ],
   "engines": {
     "node": ">=22"
   }

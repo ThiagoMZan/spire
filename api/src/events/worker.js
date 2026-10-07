@@ -5,16 +5,23 @@ import { initializeKernelRuntime } from "@spire/kernel/internal";
 import { config } from "../config.js";
 import { createDb } from "../database/knex.js";
 import { createEventBus } from "./event-bus.js";
+import { createFilesService } from "../files/files-service.js";
+import { createLocalStorage } from "../files/storage/local-storage.js";
 import { loadInstalledEventModules } from "../modules/loader.js";
 
 const workerId = `${hostname()}:${process.pid}:${randomUUID().slice(0, 8)}`;
 const db = createDb();
 const events = createEventBus({ db, logger: console });
+const files = createFilesService({
+  db,
+  storage: createLocalStorage({ rootDir: config.filesLocalDir }),
+});
 let stopping = false;
 
 initializeKernelRuntime({
   db,
   events,
+  files,
   logging: console,
   config,
   getRequestContext: () => null,
@@ -28,10 +35,26 @@ function sleep(ms) {
 
 async function claimBatch() {
   return db.transaction(async (trx) => {
+    const staleBefore = trx.raw(
+      "NOW() - (? * INTERVAL '1 millisecond')",
+      [config.EVENT_WORKER_LOCK_TIMEOUT_MS],
+    );
+
     const rows = await trx("kernel.event_delivery as d")
       .join("kernel.event_outbox as e", "e.id", "d.event_id")
-      .where("d.status", "pending")
-      .where("d.available_at", "<=", trx.fn.now())
+      .where((builder) => {
+        builder
+          .where((pending) => {
+            pending
+              .where("d.status", "pending")
+              .where("d.available_at", "<=", trx.fn.now());
+          })
+          .orWhere((stale) => {
+            stale
+              .where("d.status", "processing")
+              .where("d.locked_at", "<", staleBefore);
+          });
+      })
       .orderBy("d.created_at", "asc")
       .select(
         "d.id",
