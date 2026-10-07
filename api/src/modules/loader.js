@@ -1,7 +1,13 @@
 import { discoverInstalledModules } from "./discovery.js";
 
-function optionalExport(error) {
-  return ["ERR_PACKAGE_PATH_NOT_EXPORTED", "ERR_MODULE_NOT_FOUND"].includes(error?.code);
+function missingOptionalSubpath(error, packageName, subpath) {
+  if (error?.code === "ERR_PACKAGE_PATH_NOT_EXPORTED") return true;
+
+  return (
+    error?.code === "ERR_MODULE_NOT_FOUND" &&
+    String(error?.message || "").includes(packageName) &&
+    String(error?.message || "").includes(subpath)
+  );
 }
 
 export async function loadInstalledApiModules(app) {
@@ -22,7 +28,9 @@ export async function loadInstalledApiModules(app) {
 
       app.log.info({ module: module.id, version: module.version }, "module API registered");
     } catch (error) {
-      if (optionalExport(error) && module.api?.optional) continue;
+      if (module.api?.optional && missingOptionalSubpath(error, module.packageName, "/api")) {
+        continue;
+      }
       throw error;
     }
   }
@@ -44,7 +52,7 @@ export async function loadInstalledEventModules({ events, logger = console } = {
       await register({ events, module });
       logger?.info?.({ module: module.id, version: module.version }, "module event subscribers registered");
     } catch (error) {
-      if (optionalExport(error)) continue;
+      if (missingOptionalSubpath(error, module.packageName, "/events")) continue;
       throw error;
     }
   }

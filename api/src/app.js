@@ -12,7 +12,7 @@ import { createDb } from "./database/knex.js";
 import { createHookBus } from "./hooks/hook-bus.js";
 import { createEventBus } from "./events/event-bus.js";
 import { createFilesService } from "./files/files-service.js";
-import { createLocalStorage } from "./files/storage/local-storage.js";
+import { createConfiguredStorage } from "./files/storage/index.js";
 import { createHttpClient } from "./http/http-client.js";
 import { requestContextPlugin } from "./request-context/plugin.js";
 import { getRequestContext } from "./request-context/index.js";
@@ -30,7 +30,7 @@ export async function buildApp() {
   const events = createEventBus({ db, logger: app.log });
   const files = createFilesService({
     db,
-    storage: createLocalStorage({ rootDir: config.filesLocalDir }),
+    storage: createConfiguredStorage(config),
   });
   const http = createHttpClient({ logger: app.log });
 

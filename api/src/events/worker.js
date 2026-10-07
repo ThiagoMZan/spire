@@ -4,24 +4,30 @@ import { initializeKernelRuntime } from "@spire/kernel/internal";
 
 import { config } from "../config.js";
 import { createDb } from "../database/knex.js";
+import { createHookBus } from "../hooks/hook-bus.js";
 import { createEventBus } from "./event-bus.js";
 import { createFilesService } from "../files/files-service.js";
-import { createLocalStorage } from "../files/storage/local-storage.js";
+import { createConfiguredStorage } from "../files/storage/index.js";
+import { createHttpClient } from "../http/http-client.js";
 import { loadInstalledEventModules } from "../modules/loader.js";
 
 const workerId = `${hostname()}:${process.pid}:${randomUUID().slice(0, 8)}`;
 const db = createDb();
+const hooks = createHookBus({ logger: console });
 const events = createEventBus({ db, logger: console });
 const files = createFilesService({
   db,
-  storage: createLocalStorage({ rootDir: config.filesLocalDir }),
+  storage: createConfiguredStorage(config),
 });
+const http = createHttpClient({ logger: console });
 let stopping = false;
 
 initializeKernelRuntime({
   db,
+  hooks,
   events,
   files,
+  http,
   logging: console,
   config,
   getRequestContext: () => null,
@@ -78,6 +84,7 @@ async function claimBatch() {
       .whereIn("id", rows.map((row) => row.id))
       .update({
         status: "processing",
+        attempts: trx.raw("attempts + 1"),
         locked_at: trx.fn.now(),
         locked_by: workerId,
       });
@@ -97,13 +104,12 @@ async function markSucceeded(id) {
 }
 
 async function markFailed(row, error) {
-  const attempts = Number(row.attempts || 0) + 1;
-  const exhausted = attempts >= config.EVENT_WORKER_MAX_ATTEMPTS;
-  const delaySeconds = Math.min(300, Math.max(1, 2 ** Math.min(attempts, 8)));
+  const attemptNumber = Number(row.attempts || 0) + 1;
+  const exhausted = attemptNumber >= config.EVENT_WORKER_MAX_ATTEMPTS;
+  const delaySeconds = Math.min(300, Math.max(1, 2 ** Math.min(attemptNumber, 8)));
 
   await db("kernel.event_delivery").where({ id: row.id }).update({
     status: exhausted ? "failed" : "pending",
-    attempts,
     available_at: exhausted
       ? db.fn.now()
       : db.raw("NOW() + (? * INTERVAL '1 second')", [delaySeconds]),
