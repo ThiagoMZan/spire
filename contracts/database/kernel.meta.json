@@ -2,6 +2,9 @@
   "schema": "kernel",
   "label": "Spire Kernel",
   "tables": {
+    "login_limit": { "label": "Login attempt limits" },
+    "user": { "label": "Users" },
+    "session": { "label": "Sessions" },
     "event_outbox": { "label": "Event Outbox" },
     "event_delivery": { "label": "Event Deliveries" },
     "file": { "label": "Files" }

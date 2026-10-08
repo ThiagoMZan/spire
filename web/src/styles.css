@@ -1,32 +1,40 @@
-:root {
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #1f2937;
-  background: #f8fafc;
-}
-
+:root { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #182230; background: #f8fafc; font-synthesis: none; }
 * { box-sizing: border-box; }
 body { margin: 0; }
 a { color: inherit; text-decoration: none; }
-
-.app-shell {
-  min-height: 100vh;
-  display: grid;
-  grid-template-columns: 240px 1fr;
+h1 { font-size: clamp(26px, 3vw, 36px); font-weight: 600; line-height: 1.2; letter-spacing: -1px; margin: 12px 0; }
+p { line-height: 1.7; }
+.muted { color: #667085; }
+.eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: #667085; }
+.brand-mark { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: #4f46e5; color: white; font-size: 26px; font-weight: 700; }
+.brand-mark.small { width: 32px; height: 32px; border-radius: 9px; font-size: 19px; }
+.form-alert { margin-bottom: 20px; }
+.app-shell { min-height: 100dvh; display: grid; grid-template-columns: var(--sidebar-width, 250px) minmax(0, 1fr); transition: grid-template-columns .2s ease; }
+.topbar { min-height: 76px; padding: 20px 36px; background: white; border-bottom: 1px solid #e4e7ec; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.account { display: flex; align-items: center; gap: 12px; }
+.account-name { font-size: 13px; }
+.content { padding: 48px 36px; }
+.welcome-page { max-width: 880px; margin: 0 auto; }
+.welcome-description { max-width: 580px; margin-bottom: 36px; }
+.welcome-card p { color: #667085; margin-top: 0; margin-bottom: 24px; }
+@media (max-width: 700px) {
+  .app-shell { grid-template-columns: 76px minmax(0, 1fr); }
+  .topbar { padding: 16px 20px; }
+  .content { padding: 32px 20px; }
 }
 
-.sidebar {
-  background: #111827;
-  color: #f9fafb;
-  padding: 24px 18px;
+/* Keep browser autofill visually consistent with the Naive UI input container. */
+.n-input input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--n-color, #fff) inset;
+  -webkit-text-fill-color: var(--n-text-color);
+  caret-color: var(--n-caret-color);
+}
+.n-input input:autofill {
+  box-shadow: 0 0 0 1000px var(--n-color, #fff) inset;
 }
 
-.brand {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 28px;
-}
-
-.nav { display: grid; gap: 8px; }
-.nav a { padding: 10px 12px; border-radius: 8px; }
-.nav a.router-link-active { background: #374151; }
-.content { padding: 32px; }
+.workspace { min-width: 0; }
+.topbar-navigation { display: flex; align-items: center; gap: 12px; }
+.sidebar-backdrop { position: fixed; inset: 0; background: #10182835; border: 0; padding: 0; z-index: 15; }
+@media (max-width: 700px) { .topbar { padding: 16px 12px; } .content { padding: 28px 16px; } .account-name { display: none; } .topbar-navigation { gap: 4px; } .account { gap: 8px; } }
+@media (prefers-reduced-motion: reduce) { .app-shell { transition: none; } }

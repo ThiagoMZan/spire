@@ -1,0 +1,517 @@
+{
+  "version": 1,
+  "schemas": {
+    "kernel": {
+      "tables": {
+        "event_delivery": {
+          "columns": {
+            "id": {
+              "position": 1,
+              "dataType": "uuid",
+              "nativeType": "uuid",
+              "nullable": false,
+              "default": null,
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            },
+            "event_id": {
+              "position": 2,
+              "dataType": "uuid",
+              "nativeType": "uuid",
+              "nullable": false,
+              "default": null,
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            },
+            "subscriber_key": {
+              "position": 3,
+              "dataType": "character varying",
+              "nativeType": "varchar",
+              "nullable": false,
+              "default": null,
+              "maxLength": 250,
+              "precision": null,
+              "scale": null
+            },
+            "module_key": {
+              "position": 4,
+              "dataType": "character varying",
+              "nativeType": "varchar",
+              "nullable": true,
+              "default": null,
+              "maxLength": 150,
+              "precision": null,
+              "scale": null
+            },
+            "status": {
+              "position": 5,
+              "dataType": "character varying",
+              "nativeType": "varchar",
+              "nullable": false,
+              "default": "'pending'::character varying",
+              "maxLength": 30,
+              "precision": null,
+              "scale": null
+            },
+            "attempts": {
+              "position": 6,
+              "dataType": "integer",
+              "nativeType": "int4",
+              "nullable": false,
+              "default": "0",
+              "maxLength": null,
+              "precision": 32,
+              "scale": 0
+            },
+            "available_at": {
+              "position": 7,
+              "dataType": "timestamp with time zone",
+              "nativeType": "timestamptz",
+              "nullable": false,
+              "default": "now()",
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            },
+            "locked_at": {
+              "position": 8,
+              "dataType": "timestamp with time zone",
+              "nativeType": "timestamptz",
+              "nullable": true,
+              "default": null,
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            },
+            "locked_by": {
+              "position": 9,
+              "dataType": "character varying",
+              "nativeType": "varchar",
+              "nullable": true,
+              "default": null,
+              "maxLength": 250,
+              "precision": null,
+              "scale": null
+            },
+            "processed_at": {
+              "position": 10,
+              "dataType": "timestamp with time zone",
+              "nativeType": "timestamptz",
+              "nullable": true,
+              "default": null,
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            },
+            "last_error": {
+              "position": 11,
+              "dataType": "text",
+              "nativeType": "text",
+              "nullable": true,
+              "default": null,
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            },
+            "created_at": {
+              "position": 12,
+              "dataType": "timestamp with time zone",
+              "nativeType": "timestamptz",
+              "nullable": false,
+              "default": "now()",
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            }
+          },
+          "primaryKey": [
+            "id"
+          ],
+          "foreignKeys": [
+            {
+              "name": "event_delivery_event_id_fkey",
+              "column": "event_id",
+              "references": {
+                "schema": "kernel",
+                "table": "event_outbox",
+                "column": "id"
+              }
+            }
+          ]
+        },
+        "event_outbox": {
+          "columns": {
+            "id": {
+              "position": 1,
+              "dataType": "uuid",
+              "nativeType": "uuid",
+              "nullable": false,
+              "default": null,
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            },
+            "event_name": {
+              "position": 2,
+              "dataType": "character varying",
+              "nativeType": "varchar",
+              "nullable": false,
+              "default": null,
+              "maxLength": 200,
+              "precision": null,
+              "scale": null
+            },
+            "payload": {
+              "position": 3,
+              "dataType": "jsonb",
+              "nativeType": "jsonb",
+              "nullable": false,
+              "default": "'{}'::jsonb",
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            },
+            "metadata": {
+              "position": 4,
+              "dataType": "jsonb",
+              "nativeType": "jsonb",
+              "nullable": false,
+              "default": "'{}'::jsonb",
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            },
+            "source_module": {
+              "position": 5,
+              "dataType": "character varying",
+              "nativeType": "varchar",
+              "nullable": true,
+              "default": null,
+              "maxLength": 150,
+              "precision": null,
+              "scale": null
+            },
+            "created_at": {
+              "position": 6,
+              "dataType": "timestamp with time zone",
+              "nativeType": "timestamptz",
+              "nullable": false,
+              "default": "now()",
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            }
+          },
+          "primaryKey": [
+            "id"
+          ],
+          "foreignKeys": []
+        },
+        "file": {
+          "columns": {
+            "id": {
+              "position": 1,
+              "dataType": "uuid",
+              "nativeType": "uuid",
+              "nullable": false,
+              "default": null,
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            },
+            "file_name": {
+              "position": 2,
+              "dataType": "character varying",
+              "nativeType": "varchar",
+              "nullable": false,
+              "default": null,
+              "maxLength": 500,
+              "precision": null,
+              "scale": null
+            },
+            "content_type": {
+              "position": 3,
+              "dataType": "character varying",
+              "nativeType": "varchar",
+              "nullable": true,
+              "default": null,
+              "maxLength": 250,
+              "precision": null,
+              "scale": null
+            },
+            "size_bytes": {
+              "position": 4,
+              "dataType": "bigint",
+              "nativeType": "int8",
+              "nullable": false,
+              "default": null,
+              "maxLength": null,
+              "precision": 64,
+              "scale": 0
+            },
+            "extension": {
+              "position": 5,
+              "dataType": "character varying",
+              "nativeType": "varchar",
+              "nullable": true,
+              "default": null,
+              "maxLength": 30,
+              "precision": null,
+              "scale": null
+            },
+            "storage_driver": {
+              "position": 6,
+              "dataType": "character varying",
+              "nativeType": "varchar",
+              "nullable": false,
+              "default": null,
+              "maxLength": 50,
+              "precision": null,
+              "scale": null
+            },
+            "storage_path": {
+              "position": 7,
+              "dataType": "text",
+              "nativeType": "text",
+              "nullable": false,
+              "default": null,
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            },
+            "uploaded_by": {
+              "position": 8,
+              "dataType": "character varying",
+              "nativeType": "varchar",
+              "nullable": true,
+              "default": null,
+              "maxLength": 150,
+              "precision": null,
+              "scale": null
+            },
+            "created_at": {
+              "position": 9,
+              "dataType": "timestamp with time zone",
+              "nativeType": "timestamptz",
+              "nullable": false,
+              "default": "now()",
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            }
+          },
+          "primaryKey": [
+            "id"
+          ],
+          "foreignKeys": []
+        },
+        "login_limit": {
+          "columns": {
+            "key": {
+              "position": 1,
+              "dataType": "character varying",
+              "nativeType": "varchar",
+              "nullable": false,
+              "default": null,
+              "maxLength": 64,
+              "precision": null,
+              "scale": null
+            },
+            "attempts": {
+              "position": 2,
+              "dataType": "bigint",
+              "nativeType": "int8",
+              "nullable": false,
+              "default": null,
+              "maxLength": null,
+              "precision": 64,
+              "scale": 0
+            },
+            "window_started_at": {
+              "position": 3,
+              "dataType": "timestamp with time zone",
+              "nativeType": "timestamptz",
+              "nullable": false,
+              "default": "now()",
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            }
+          },
+          "primaryKey": [
+            "key"
+          ],
+          "foreignKeys": []
+        },
+        "session": {
+          "columns": {
+            "id": {
+              "position": 1,
+              "dataType": "uuid",
+              "nativeType": "uuid",
+              "nullable": false,
+              "default": "gen_random_uuid()",
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            },
+            "user_id": {
+              "position": 2,
+              "dataType": "uuid",
+              "nativeType": "uuid",
+              "nullable": false,
+              "default": null,
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            },
+            "token_hash": {
+              "position": 3,
+              "dataType": "text",
+              "nativeType": "text",
+              "nullable": false,
+              "default": null,
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            },
+            "created_at": {
+              "position": 4,
+              "dataType": "timestamp with time zone",
+              "nativeType": "timestamptz",
+              "nullable": false,
+              "default": "now()",
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            },
+            "last_seen_at": {
+              "position": 5,
+              "dataType": "timestamp with time zone",
+              "nativeType": "timestamptz",
+              "nullable": false,
+              "default": "now()",
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            },
+            "expires_at": {
+              "position": 6,
+              "dataType": "timestamp with time zone",
+              "nativeType": "timestamptz",
+              "nullable": false,
+              "default": null,
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            },
+            "revoked_at": {
+              "position": 7,
+              "dataType": "timestamp with time zone",
+              "nativeType": "timestamptz",
+              "nullable": true,
+              "default": null,
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            }
+          },
+          "primaryKey": [
+            "id"
+          ],
+          "foreignKeys": [
+            {
+              "name": "session_user_id_fkey",
+              "column": "user_id",
+              "references": {
+                "schema": "kernel",
+                "table": "user",
+                "column": "id"
+              }
+            }
+          ]
+        },
+        "user": {
+          "columns": {
+            "id": {
+              "position": 1,
+              "dataType": "uuid",
+              "nativeType": "uuid",
+              "nullable": false,
+              "default": "gen_random_uuid()",
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            },
+            "email": {
+              "position": 2,
+              "dataType": "character varying",
+              "nativeType": "varchar",
+              "nullable": false,
+              "default": null,
+              "maxLength": 320,
+              "precision": null,
+              "scale": null
+            },
+            "display_name": {
+              "position": 3,
+              "dataType": "character varying",
+              "nativeType": "varchar",
+              "nullable": false,
+              "default": null,
+              "maxLength": 250,
+              "precision": null,
+              "scale": null
+            },
+            "password_hash": {
+              "position": 4,
+              "dataType": "text",
+              "nativeType": "text",
+              "nullable": false,
+              "default": null,
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            },
+            "disabled_at": {
+              "position": 5,
+              "dataType": "timestamp with time zone",
+              "nativeType": "timestamptz",
+              "nullable": true,
+              "default": null,
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            },
+            "created_at": {
+              "position": 6,
+              "dataType": "timestamp with time zone",
+              "nativeType": "timestamptz",
+              "nullable": false,
+              "default": "now()",
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            },
+            "updated_at": {
+              "position": 7,
+              "dataType": "timestamp with time zone",
+              "nativeType": "timestamptz",
+              "nullable": false,
+              "default": "now()",
+              "maxLength": null,
+              "precision": null,
+              "scale": null
+            }
+          },
+          "primaryKey": [
+            "id"
+          ],
+          "foreignKeys": []
+        }
+      }
+    }
+  }
+}

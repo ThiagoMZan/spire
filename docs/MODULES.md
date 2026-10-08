@@ -143,3 +143,7 @@ No runtime install/enable/disable API is part of the kernel.
 Each module changes only its own schema.
 
 A module may create a foreign key to another module when the dependency is explicit, but it must never alter the other module's tables.
+
+## Shared visual standard
+
+Frontend modules follow [the Spire UI standard](UI.md): Naive UI components, default component geometry, and the theme and providers supplied by the host.

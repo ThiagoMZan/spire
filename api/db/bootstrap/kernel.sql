@@ -1,6 +1,45 @@
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 CREATE SCHEMA IF NOT EXISTS kernel;
 
+CREATE TABLE IF NOT EXISTS kernel.login_limit (
+  key varchar(64) PRIMARY KEY,
+  attempts bigint NOT NULL,
+  window_started_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS kernel."user" (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  email varchar(320) NOT NULL,
+  display_name varchar(250) NOT NULL,
+  password_hash text NOT NULL,
+  disabled_at timestamptz,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  CONSTRAINT user_email_normalized CHECK (
+    email = lower(btrim(email)) AND email <> ''
+  ),
+  CONSTRAINT user_email_unique UNIQUE (email)
+);
+
+CREATE TABLE IF NOT EXISTS kernel.session (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL REFERENCES kernel."user"(id),
+  token_hash text NOT NULL UNIQUE,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  last_seen_at timestamptz NOT NULL DEFAULT now(),
+  expires_at timestamptz NOT NULL,
+  revoked_at timestamptz,
+  CONSTRAINT session_expiration CHECK (expires_at > created_at),
+  CONSTRAINT session_activity CHECK (last_seen_at >= created_at)
+);
+
+CREATE INDEX IF NOT EXISTS ix_session_user_active
+  ON kernel.session (user_id, created_at, id)
+  WHERE revoked_at IS NULL;
+
+CREATE INDEX IF NOT EXISTS ix_session_expires_at
+  ON kernel.session (expires_at);
+
 CREATE TABLE IF NOT EXISTS kernel.event_outbox (
   id uuid PRIMARY KEY,
   event_name varchar(200) NOT NULL,

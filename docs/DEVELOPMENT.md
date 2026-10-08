@@ -40,6 +40,16 @@ The bootstrap is only a starting point for a fresh database. It is not the datab
 npm run db:contract:generate
 ```
 
+## API and web together
+
+```bash
+npm run dev
+```
+
+On Windows PowerShell, use `npm.cmd run dev` if execution policy blocks npm.ps1.
+
+This starts both processes in one terminal, with api/web log prefixes. The API restarts when imported code changes; Vite updates the frontend. Ctrl+C stops both processes. If either process exits, the other is stopped too. To restart both manually, press Ctrl+C and run the command again. Stop previously started standalone API/web processes before switching to this command.
+
 ## API
 
 ```bash

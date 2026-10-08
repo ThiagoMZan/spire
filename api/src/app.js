@@ -5,6 +5,10 @@ import { fileURLToPath } from "node:url";
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import fastifyStatic from "@fastify/static";
+import cookie from "@fastify/cookie";
+import { createAuthService } from "./auth/service.js";
+import { registerAuth } from "./auth/routes.js";
+import { runWithRequestContext } from "./request-context/index.js";
 import { initializeKernelRuntime } from "@spire/kernel/internal";
 
 import { config } from "./config.js";
@@ -14,7 +18,6 @@ import { createEventBus } from "./events/event-bus.js";
 import { createFilesService } from "./files/files-service.js";
 import { createConfiguredStorage } from "./files/storage/index.js";
 import { createHttpClient } from "./http/http-client.js";
-import { requestContextPlugin } from "./request-context/plugin.js";
 import { getRequestContext } from "./request-context/index.js";
 import { discoverInstalledModules } from "./modules/discovery.js";
 import { loadInstalledApiModules, loadInstalledEventModules } from "./modules/loader.js";
@@ -46,10 +49,15 @@ export async function buildApp() {
   });
 
   await app.register(cors, { origin: config.CORS_ORIGIN, credentials: true });
-  await app.register(requestContextPlugin);
+  await app.register(cookie);
+  app.addHook("onRequest", (request, _reply, done) => {
+    runWithRequestContext({ requestId: request.id, principal: null, moduleKey: null }, done);
+  });
+  const auth = await createAuthService({ db, config });
+  await registerAuth(app, { auth, config });
 
   app.get("/api/health", async () => ({ ok: true, service: "spire" }));
-  app.get("/api/kernel/modules", async () => ({ items: await discoverInstalledModules() }));
+  app.get("/api/kernel/modules", { preHandler: app.requireUser }, async () => ({ items: await discoverInstalledModules() }));
 
   await loadInstalledEventModules({ events, logger: app.log });
   await loadInstalledApiModules(app);

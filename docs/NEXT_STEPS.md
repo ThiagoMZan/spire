@@ -5,7 +5,7 @@ The initial kernel intentionally stops before implementing every platform concer
 Recommended next sequence:
 
 1. run the current foundation locally and fix runtime/package issues;
-2. implement authentication and PostgreSQL-backed sessions;
+2. extend the implemented login/logout and PostgreSQL sessions with administrative user tooling and password recovery; see docs/AUTH.md;
 3. implement permissions/RBAC and expose them through the public kernel API;
 4. add functional audit separate from technical logs;
 5. add an S3-compatible file storage provider;

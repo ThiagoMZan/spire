@@ -8,6 +8,7 @@
     "packages/kernel"
   ],
   "scripts": {
+    "dev": "concurrently --kill-others --names api,web \"npm run dev:api\" \"npm run dev:web\"",
     "dev:api": "node --watch api/src/server.js",
     "dev:web": "npm run modules:generate && vite --config web/vite.config.js",
     "start": "node api/src/server.js",
@@ -20,21 +21,27 @@
     "test": "node --test"
   },
   "dependencies": {
+    "@fastify/cookie": "^11.1.2",
     "@fastify/cors": "^10.0.0",
     "@fastify/static": "^8.0.0",
     "dotenv": "^16.4.5",
     "fastify": "^5.2.1",
     "knex": "^3.1.0",
+    "naive-ui": "^2.45.3",
     "pg": "^8.12.0",
-    "zod": "^3.24.1",
     "vue": "^3.5.0",
-    "vue-router": "^4.5.0"
+    "vue-router": "^4.5.0",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.0",
+    "concurrently": "^9.2.4",
     "vite": "^6.0.0"
   },
   "engines": {
     "node": ">=22"
+  },
+  "overrides": {
+    "shell-quote": "1.11.0"
   }
 }
